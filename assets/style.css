@@ -54,6 +54,7 @@ h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(32px, 5vw, 48
 .nav-in { display: flex; gap: 4px; overflow-x: auto; padding-top: 8px; padding-bottom: 8px; scrollbar-width: none; }
 .nav a { white-space: nowrap; text-decoration: none; font-size: 14px; color: var(--muted); padding: 6px 10px; border-radius: 999px; }
 .nav a:hover, .nav a:focus-visible { background: var(--panel); color: var(--fg); }
+.nav a.nav-cta { color: var(--fg); font-weight: 600; border: 1px solid var(--c0); }
 
 .sec { padding: 40px 0 8px; }
 h2 { font-size: 24px; margin: 0 0 6px; }

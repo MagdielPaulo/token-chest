@@ -73,3 +73,24 @@ Atenção: o print do mapa é arte da Epic. Ele não vai para o site publicado a
 - Chance de pelo menos um token em N baús: `1 − (1 − p)^N`, com `p = 1/137.500` (ou `p × 1,5` nas Treasure Hours).
 - Cenários: horas por dia × dias restantes até 5/12; as horas de Treasure Hour restantes entram com a chance maior.
 - Como o token achado por um jogador vale para todo o time na partida, os baús do squad inteiro somam.
+
+## Contador do squad (`/contador`)
+
+Página para os quatro marcarem cada baú aberto pelo celular e verem o total juntos, ao vivo.
+É só um site: não lê nem mexe no jogo.
+
+Arquivos: `contador.html`, `assets/contador.js`, `assets/contador.css` e a função `api/sala.js`.
+
+Para funcionar entre aparelhos, o projeto precisa de um banco Redis (Upstash, grátis):
+
+1. Na Vercel, abra o projeto → aba **Storage** → **Create Database** (ou **Browse Marketplace**) → **Upstash** → **Redis**.
+2. Escolha o plano **Free**, a região mais perto (ex.: São Paulo, se aparecer) e conecte ao projeto.
+3. Confirme em **Settings → Environment Variables** que existem `KV_REST_API_URL` e `KV_REST_API_TOKEN`
+   (ou `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN`).
+4. Em **Deployments**, clique nos três pontinhos do último deploy → **Redeploy**.
+
+Sem o banco, a página funciona em "modo local" (conta só no próprio aparelho).
+
+Consumo: cada aparelho consulta a sala a cada 3 s com a página aberta (10 s quando ninguém mexe há 2 min) e
+para quando a tela está em segundo plano. A resposta fica 2 s em cache na CDN, então os quatro celulares dividem
+a mesma consulta. Os dados de uma sala são apagados depois de 60 dias sem uso.

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a1a19">
+<title>Contador do squad · Caça ao Token Pirata</title>
+<meta name="description" content="Contador de baús em tempo real para o squad, fora do jogo.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%23e0a84a' stroke='%239a6b1f' stroke-width='4'/%3E%3Ctext x='32' y='42' font-size='28' text-anchor='middle' fill='%235a3d0c'%3E%E2%98%A0%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/contador.css">
+</head>
+<body class="ct">
+<header class="ct-top">
+  <a href="/" class="ct-back">← Guia</a>
+  <strong>Contador do squad</strong>
+  <span class="pill" id="status">conectando…</span>
+</header>
+
+<main class="ct-main">
+
+  <section id="tela-entrar" class="ct-entrar" hidden>
+    <h1>Contador do squad</h1>
+    <p class="intro">Cada um abre esta página no celular, entra na mesma sala e toca no botão a cada baú aberto. O total aparece para os quatro em tempo real. É só um site: não fica rodando junto com o jogo.</p>
+    <form id="form-entrar" class="card ct-form">
+      <label class="field"><span>Seu nome no squad</span><input id="in-nome" class="input" maxlength="20" autocomplete="nickname" placeholder="ex.: Magdiel" required></label>
+      <label class="field"><span>Código da sala (deixe vazio para criar uma nova)</span><input id="in-sala" class="input" maxlength="32" autocapitalize="none" autocomplete="off" placeholder="ex.: squad-k7p2"></label>
+      <button type="submit" class="ct-btn primario">Entrar</button>
+      <p class="small">Depois de entrar, use "Copiar link" e mande no grupo. Quem abrir o link cai direto na mesma sala.</p>
+    </form>
+  </section>
+
+  <section id="tela-sala" hidden>
+    <div class="ct-sala">
+      <div>
+        <p class="kpi-l">Sala</p>
+        <p class="ct-codigo" id="sala-codigo">—</p>
+      </div>
+      <div class="ct-sala-acoes">
+        <button type="button" class="btn" id="btn-copiar">Copiar link</button>
+        <button type="button" class="btn" id="btn-share" hidden>Compartilhar</button>
+      </div>
+    </div>
+    <p class="ct-voce">Você: <b id="voce-nome">—</b> · <button type="button" class="link" id="btn-trocar">trocar nome ou sala</button></p>
+
+    <div class="ct-aviso ok" id="aviso-th" hidden>Treasure Hour agora: chance do token <b id="th-mult">1,5×</b> até <b id="th-fim">—</b>. Joguem tudo!</div>
+    <div class="ct-aviso bad" id="aviso-token" hidden><b id="token-quem">—</b> achou o token! <b>Ninguém sai da partida</b> até o squad inteiro terminar.</div>
+    <div class="ct-aviso warn" id="aviso-local" hidden>Modo local: a sala compartilhada ainda não está ligada no site (falta o banco de dados na Vercel). Os números ficam só neste aparelho.</div>
+
+    <button type="button" class="ct-bau" id="btn-bau" data-tipo="normal">
+      <span class="ct-bau-mais">+1</span>
+      <span class="ct-bau-txt">Baú aberto</span>
+    </button>
+    <div class="ct-tipos" role="group" aria-label="Outros tipos de baú">
+      <button type="button" class="ct-btn" data-tipo="raro">+1 raro</button>
+      <button type="button" class="ct-btn" data-tipo="enterrado">+1 enterrado</button>
+      <button type="button" class="ct-btn" data-tipo="sprite">+1 de Sprite</button>
+    </div>
+    <div class="ct-sec-acoes">
+      <button type="button" class="ct-btn" id="btn-partida">+1 partida</button>
+      <button type="button" class="ct-btn" id="btn-desfazer">Desfazer meu último</button>
+    </div>
+    <p class="ct-feed" id="feed" aria-live="polite">—</p>
+
+    <h2 class="ct-h2">Sessão de agora</h2>
+    <div class="ct-grid">
+      <div class="card"><p class="kpi-l">Baús do squad</p><p class="kpi-v" id="s-baus">—</p></div>
+      <div class="card"><p class="kpi-l">Tempo de sessão</p><p class="kpi-v" id="s-tempo">—</p></div>
+      <div class="card"><p class="kpi-l">Baús por hora</p><p class="kpi-v" id="s-ritmo">—</p></div>
+      <div class="card"><p class="kpi-l">Partidas · baús por partida</p><p class="kpi-v" id="s-partidas">—</p></div>
+    </div>
+
+    <h2 class="ct-h2">Quem abriu mais</h2>
+    <ol class="ct-jogadores" id="lista-jogadores"></ol>
+
+    <h2 class="ct-h2">Caçada inteira</h2>
+    <div class="ct-grid">
+      <div class="card"><p class="kpi-l">Baús no total</p><p class="kpi-v" id="t-baus">—</p><p class="kpi-n" id="t-tipos">—</p></div>
+      <div class="card"><p class="kpi-l">Chance acumulada de token</p><p class="kpi-v" id="t-chance">—</p><p class="kpi-n" id="t-chance-n">—</p></div>
+    </div>
+    <p class="small">A chance acumulada mostra a probabilidade de pelo menos um token ter saído com esse número de baús. Cada baú novo continua sendo 1 em 137.500: a sorte não "acumula" para quem está há mais tempo sem achar.</p>
+
+    <h2 class="ct-h2">Opções</h2>
+    <div class="ct-opcoes">
+      <label class="ctl inline"><input type="checkbox" id="chk-tela"> Manter a tela do celular acesa</label>
+      <label class="ctl inline"><input type="checkbox" id="chk-vibrar" checked> Vibrar ao tocar</label>
+      <button type="button" class="btn" id="btn-sessao">Começar nova sessão</button>
+      <button type="button" class="btn" id="btn-token">Achamos o token!</button>
+      <button type="button" class="btn ghost danger" id="btn-zerar">Zerar a sala</button>
+    </div>
+    <p class="small">Use o contador no celular ou numa segunda tela. Ele não lê nem mexe no jogo, então não tem nada a ver com o anti-cheat. Só não usem macro, auto-clicker ou programa que leia a tela do jogo.</p>
+  </section>
+</main>
+
+<script src="assets/contador.js"></script>
+</body>
+</html>
