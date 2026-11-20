@@ -1,0 +1,26 @@
+[
+  {
+    "cenario": "Solo (referência)",
+    "baus_por_hora": 40,
+    "como": "Um jogador sozinho farmando",
+    "estimativa": true
+  },
+  {
+    "cenario": "Squad casual",
+    "baus_por_hora": 60,
+    "como": "Os 4 juntos jogando partida normal com lutas",
+    "estimativa": true
+  },
+  {
+    "cenario": "Squad focado",
+    "baus_por_hora": 120,
+    "como": "Ritmo de 20 baús a cada 10 minutos citado em guia",
+    "estimativa": false
+  },
+  {
+    "cenario": "Squad otimizado",
+    "baus_por_hora": 200,
+    "como": "Divisão 2+2 em locais vizinhos e refila rápida",
+    "estimativa": true
+  }
+]
