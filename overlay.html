@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overlay · Contador do squad</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%23e0a84a'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/overlay.css">
+</head>
+<body class="ov">
+  <div class="ov-painel" id="painel">
+    <div class="ov-topo">
+      <span class="ov-dot" id="dot" title="conexão"></span>
+      <span class="ov-partida" id="ov-partida">—</span>
+      <span class="ov-tempo" id="ov-tempo"></span>
+    </div>
+    <div class="ov-num"><span id="ov-baus">0</span><small id="ov-baus-l">baús nesta partida</small></div>
+    <ol class="ov-jog" id="ov-jog"></ol>
+    <div class="ov-linha" id="ov-total">—</div>
+    <div class="ov-linha" id="ov-rank"></div>
+    <div class="ov-linha ov-th" id="ov-th"></div>
+    <div class="ov-token" id="ov-token" hidden></div>
+    <div class="ov-aviso" id="ov-aviso" hidden></div>
+    <div class="ov-flash" id="ov-flash" aria-live="polite"></div>
+    <div class="ov-ajuda" id="ov-ajuda" hidden></div>
+  </div>
+
+  <form class="ov-painel ov-config" id="ov-config" hidden>
+    <p class="ov-partida">Overlay do contador</p>
+    <label>Seu nome no squad<input id="cf-nome" maxlength="20" required></label>
+    <label>Código da sala<input id="cf-sala" maxlength="32" autocapitalize="none" required placeholder="ex.: squad-k7p2"></label>
+    <button type="submit">Entrar</button>
+    <p class="ov-mini">Use o mesmo código da sala do celular.</p>
+  </form>
+
+  <script src="assets/overlay.js"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{
+  "name": "token-pirata-overlay",
+  "version": "1.0.0",
+  "description": "Overlay do contador do squad (janela separada, sempre por cima)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win zip --x64"
+  },
+  "keywords": [],
+  "author": "Squad do token",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^45.4.1",
+    "electron-builder": "^26.18.0"
+  },
+  "productName": "Token Pirata Overlay",
+  "build": {
+    "appId": "app.tokenpirata.overlay",
+    "productName": "Token Pirata Overlay",
+    "files": [
+      "main.js",
+      "preload-overlay.js",
+      "preload-setup.js",
+      "setup.html",
+      "icon.png"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "zip"
+      ],
+      "icon": "icon.png",
+      "signAndEditExecutable": false
+    }
+  }
+}

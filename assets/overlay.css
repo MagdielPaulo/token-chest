@@ -1,0 +1,46 @@
+html, body { margin: 0; padding: 0; background: #111; }
+body.desktop { background: transparent; overflow: hidden; }
+.ov { font: 14px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color: #f3f2ee; -webkit-font-smoothing: antialiased; user-select: none; }
+.ov-painel { box-sizing: border-box; width: 100%; max-width: 340px; padding: 10px 12px 12px; border-radius: 14px; background: rgba(16, 16, 15, var(--opac, .78)); border: 1px solid rgba(255, 255, 255, .12); text-shadow: 0 1px 2px rgba(0, 0, 0, .6); }
+body.desktop .ov-painel { max-width: none; min-height: calc(100vh - 2px); }
+body.movendo .ov-painel { outline: 2px dashed #3987e5; outline-offset: -2px; -webkit-app-region: drag; cursor: move; }
+body.movendo .ov-config, body.movendo .ov-config * { -webkit-app-region: no-drag; }
+
+.ov-topo { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.ov-dot { width: 8px; height: 8px; border-radius: 50%; background: #8f8d85; flex: none; }
+.ov-dot.ok { background: #4cc27a; box-shadow: 0 0 6px #4cc27a; }
+.ov-dot.bad { background: #e66767; }
+.ov-partida { font-weight: 700; margin: 0; }
+.ov-tempo { margin-left: auto; font-variant-numeric: tabular-nums; color: #c3c2b7; }
+
+.ov-num { display: flex; align-items: baseline; gap: 8px; margin: 2px 0 4px; }
+.ov-num span { font: 400 46px/1 Georgia, "Times New Roman", serif; font-variant-numeric: tabular-nums; }
+.ov-num small { font-size: 12px; color: #c3c2b7; }
+
+.ov-jog { list-style: none; margin: 0 0 6px; padding: 0; display: grid; gap: 3px; }
+.ov-jog li { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 8px; font-size: 13px; }
+.ov-jog li.eu { font-weight: 700; }
+.ov-jog b { font-variant-numeric: tabular-nums; }
+.ov-jog i { grid-column: 1 / -1; display: block; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, .12); overflow: hidden; }
+.ov-jog i span { display: block; height: 100%; background: #3987e5; border-radius: 2px; }
+
+.ov-linha { font-size: 12px; color: #d8d6cf; margin-top: 3px; font-variant-numeric: tabular-nums; }
+.ov-linha:empty { display: none; }
+.ov-th.agora { color: #4cc27a; font-weight: 700; }
+.ov-token { margin-top: 8px; padding: 6px 8px; border-radius: 8px; background: rgba(224, 168, 74, .25); border: 1px solid #e0a84a; font-weight: 700; font-size: 13px; }
+.ov-aviso { margin-top: 8px; padding: 6px 8px; border-radius: 8px; background: rgba(230, 103, 103, .22); border: 1px solid #e66767; font-weight: 700; font-size: 13px; }
+
+.ov-flash { height: 18px; margin-top: 4px; font-size: 13px; font-weight: 700; color: #7fb6ff; opacity: 0; transition: opacity .25s; }
+.ov-flash.on { opacity: 1; transition: none; }
+@media (prefers-reduced-motion: reduce) { .ov-flash { transition: none; } }
+
+.ov-ajuda { margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255, 255, 255, .25); font-size: 12px; color: #d8d6cf; }
+.ov-ajuda kbd { font: 600 11px ui-monospace, Consolas, monospace; padding: 0 4px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, .35); }
+
+.ov-config { display: grid; gap: 8px; }
+.ov-config label { display: grid; gap: 4px; font-size: 12px; color: #c3c2b7; }
+.ov-config input { font: inherit; font-size: 15px; padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, .25); background: rgba(0, 0, 0, .4); color: #fff; user-select: text; }
+.ov-config button { font: inherit; font-weight: 700; padding: 9px; border-radius: 8px; border: 0; background: #3987e5; color: #fff; cursor: pointer; }
+.ov-mini { margin: 0; font-size: 11px; color: #c3c2b7; }
+
+body.movendo #ov-rank, body.movendo #ov-th, body.movendo #ov-total, body.movendo .ov-flash { display: none; }

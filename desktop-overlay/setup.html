@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+<title>Token Pirata Overlay · Configurar</title>
+<style>
+  body { margin: 0; font: 14px/1.45 system-ui, "Segoe UI", Arial, sans-serif; background: #1a1a19; color: #f0efec; }
+  main { padding: 20px 24px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  p { margin: 0 0 12px; color: #c3c2b7; }
+  label { display: grid; gap: 4px; margin: 0 0 12px; font-size: 13px; color: #c3c2b7; }
+  input[type=text] { font: inherit; font-size: 15px; padding: 8px 10px; border-radius: 8px; border: 1px solid #47433a; background: #232321; color: #fff; }
+  fieldset { border: 1px solid #3a3936; border-radius: 10px; padding: 10px 12px 2px; margin: 0 0 12px; }
+  legend { padding: 0 6px; color: #c3c2b7; font-size: 13px; }
+  .atalhos { display: grid; grid-template-columns: 1fr 120px; gap: 6px 10px; align-items: center; margin-bottom: 10px; }
+  .atalhos input { padding: 6px 8px; font-size: 14px; }
+  button { font: inherit; font-weight: 700; font-size: 15px; width: 100%; padding: 11px; border: 0; border-radius: 10px; background: #3987e5; color: #fff; cursor: pointer; }
+  .msg { min-height: 1.4em; margin-top: 10px; font-size: 13px; }
+  .msg.erro { color: #e66767; } .msg.ok { color: #4cc27a; }
+  small { color: #8f8d85; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Token Pirata Overlay</h1>
+  <p>Mostra o contador do squad por cima do jogo. É uma janela separada: não lê nem mexe no Fortnite.</p>
+  <form id="f">
+    <label>Endereço do seu site na Vercel
+      <input type="text" id="site" placeholder="caca-token-pirata.vercel.app" required>
+    </label>
+    <label>Transparência do fundo (<span id="op-v"></span>)
+      <input type="range" id="op" min="0.3" max="1" step="0.05">
+    </label>
+    <fieldset>
+      <legend>Atalhos de teclado</legend>
+      <div class="atalhos">
+        <span>+1 baú</span><input type="text" id="a-bau">
+        <span>Desfazer meu último</span><input type="text" id="a-desfazer">
+        <span>Fim da partida (apertar 2×)</span><input type="text" id="a-fim">
+        <span>Mostrar / ocultar overlay</span><input type="text" id="a-mostrar">
+        <span>Mover a janela</span><input type="text" id="a-mover">
+      </div>
+      <small>Exemplos: F7, F8, Ctrl+F10, Alt+B, num1. Escolha teclas que vocês não usam no Fortnite: a tecla usada aqui deixa de chegar ao jogo.</small>
+    </fieldset>
+    <button type="submit">Salvar e abrir o overlay</button>
+    <p class="msg" id="msg"></p>
+  </form>
+  <p><small>Depois de salvar, o app fica no ícone perto do relógio do Windows. Clique com o botão direito nele para configurar de novo ou sair.</small></p>
+</main>
+<script>
+  const $ = (s) => document.querySelector(s);
+  const campos = ['bau', 'desfazer', 'fim', 'mostrar', 'mover'];
+  window.tpSetup.ler().then((c) => {
+    $('#site').value = c.site ? c.site.replace(/^https:\/\//, '') : '';
+    $('#op').value = c.opacidade;
+    $('#op-v').textContent = Math.round(c.opacidade * 100) + '%';
+    campos.forEach((k) => { $('#a-' + k).value = c.atalhos[k] || ''; });
+    if (c.falhas && c.falhas.length) { $('#msg').className = 'msg erro'; $('#msg').textContent = 'Estas teclas não funcionaram: ' + c.falhas.join(', '); }
+  });
+  $('#op').addEventListener('input', () => { $('#op-v').textContent = Math.round($('#op').value * 100) + '%'; });
+  $('#f').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const atalhos = {};
+    campos.forEach((k) => { atalhos[k] = $('#a-' + k).value.trim(); });
+    const r = await window.tpSetup.salvar({ site: $('#site').value, opacidade: Number($('#op').value), atalhos });
+    const m = $('#msg');
+    if (!r.ok) { m.className = 'msg erro'; m.textContent = r.erro; return; }
+    if (r.falhas && r.falhas.length) { m.className = 'msg erro'; m.textContent = 'Salvo, mas estas teclas não funcionaram: ' + r.falhas.join(', ') + '. Troque por outras.'; return; }
+    m.className = 'msg ok';
+    m.textContent = 'Pronto! O overlay abriu. Pode fechar esta janela.';
+  });
+</script>
+</body>
+</html>
