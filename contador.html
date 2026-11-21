@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1a1a19">
 <title>Contador do squad · Caça ao Token Pirata</title>
-<meta name="description" content="Contador de baús em tempo real para o squad, fora do jogo.">
+<meta name="description" content="Contador de baús em tempo real para o squad, por partida, fora do jogo.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%23e0a84a' stroke='%239a6b1f' stroke-width='4'/%3E%3Ctext x='32' y='42' font-size='28' text-anchor='middle' fill='%235a3d0c'%3E%E2%98%A0%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="stylesheet" href="assets/contador.css">
@@ -21,7 +21,7 @@
 
   <section id="tela-entrar" class="ct-entrar" hidden>
     <h1>Contador do squad</h1>
-    <p class="intro">Cada um abre esta página no celular, entra na mesma sala e toca no botão a cada baú aberto. O total aparece para os quatro em tempo real. É só um site: não fica rodando junto com o jogo.</p>
+    <p class="intro">Cada um abre esta página no celular, entra na mesma sala e toca no botão a cada baú aberto. O placar de cada partida, o total e o rank aparecem para os quatro em tempo real. É só um site: não roda junto com o jogo.</p>
     <form id="form-entrar" class="card ct-form">
       <label class="field"><span>Seu nome no squad</span><input id="in-nome" class="input" maxlength="20" autocomplete="nickname" placeholder="ex.: Magdiel" required></label>
       <label class="field"><span>Código da sala (deixe vazio para criar uma nova)</span><input id="in-sala" class="input" maxlength="32" autocapitalize="none" autocomplete="off" placeholder="ex.: squad-k7p2"></label>
@@ -47,6 +47,15 @@
     <div class="ct-aviso bad" id="aviso-token" hidden><b id="token-quem">—</b> achou o token! <b>Ninguém sai da partida</b> até o squad inteiro terminar.</div>
     <div class="ct-aviso warn" id="aviso-local" hidden>Modo local: a sala compartilhada ainda não está ligada no site (falta o banco de dados na Vercel). Os números ficam só neste aparelho.</div>
 
+    <!-- partida atual -->
+    <div class="ct-placar" id="placar">
+      <div>
+        <p class="ct-placar-titulo" id="pa-titulo">—</p>
+        <p class="ct-placar-sub" id="pa-sub">—</p>
+      </div>
+      <p class="ct-placar-num"><span id="pa-baus">0</span><small>baús na partida</small></p>
+    </div>
+
     <button type="button" class="ct-bau" id="btn-bau" data-tipo="normal">
       <span class="ct-bau-mais">+1</span>
       <span class="ct-bau-txt">Baú aberto</span>
@@ -57,38 +66,71 @@
       <button type="button" class="ct-btn" data-tipo="sprite">+1 de Sprite</button>
     </div>
     <div class="ct-sec-acoes">
-      <button type="button" class="ct-btn" id="btn-partida">+1 partida</button>
       <button type="button" class="ct-btn" id="btn-desfazer">Desfazer meu último</button>
+      <button type="button" class="ct-btn fim" id="btn-fim">🏁 Fim da partida</button>
+      <button type="button" class="ct-btn" id="btn-abrir" hidden>▶ Começar partida</button>
     </div>
     <p class="ct-feed" id="feed" aria-live="polite">—</p>
 
-    <h2 class="ct-h2">Sessão de agora</h2>
-    <div class="ct-grid">
-      <div class="card"><p class="kpi-l">Baús do squad</p><p class="kpi-v" id="s-baus">—</p></div>
-      <div class="card"><p class="kpi-l">Tempo de sessão</p><p class="kpi-v" id="s-tempo">—</p></div>
-      <div class="card"><p class="kpi-l">Baús por hora</p><p class="kpi-v" id="s-ritmo">—</p></div>
-      <div class="card"><p class="kpi-l">Partidas · baús por partida</p><p class="kpi-v" id="s-partidas">—</p></div>
+    <h2 class="ct-h2" id="pa-h2">Nesta partida</h2>
+    <ol class="ct-jogadores" id="pa-jogadores"></ol>
+    <p class="small" id="pa-tipos"></p>
+
+    <!-- última partida -->
+    <section id="ultima" class="card ct-ultima" hidden>
+      <p class="kpi-l">Última partida</p>
+      <p class="ct-ultima-titulo" id="ul-titulo">—</p>
+      <ol class="ct-ultima-lista" id="ul-lista"></ol>
+    </section>
+
+    <!-- histórico -->
+    <h2 class="ct-h2">Partida por partida</h2>
+    <p class="small tight" id="hist-vazio">Ainda não tem partida fechada. Quando a partida acabar, alguém toca em "Fim da partida".</p>
+    <div class="ct-barras-wrap" id="barras-wrap" hidden>
+      <div class="ct-barras" id="barras" role="img" aria-label="Baús do squad em cada partida"></div>
+      <div class="tip" id="barras-tip" hidden></div>
+    </div>
+    <div class="table-wrap" id="hist-wrap" hidden>
+      <table class="table ct-hist" id="tabela-hist">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
     </div>
 
-    <h2 class="ct-h2">Quem abriu mais</h2>
-    <ol class="ct-jogadores" id="lista-jogadores"></ol>
-
-    <h2 class="ct-h2">Caçada inteira</h2>
+    <!-- geral -->
+    <h2 class="ct-h2">Geral da caçada</h2>
     <div class="ct-grid">
-      <div class="card"><p class="kpi-l">Baús no total</p><p class="kpi-v" id="t-baus">—</p><p class="kpi-n" id="t-tipos">—</p></div>
-      <div class="card"><p class="kpi-l">Chance acumulada de token</p><p class="kpi-v" id="t-chance">—</p><p class="kpi-n" id="t-chance-n">—</p></div>
+      <div class="card"><p class="kpi-l">Baús no total</p><p class="kpi-v" id="g-baus">—</p><p class="kpi-n" id="g-tipos">—</p></div>
+      <div class="card"><p class="kpi-l">Partidas fechadas</p><p class="kpi-v" id="g-partidas">—</p><p class="kpi-n" id="g-tempo">—</p></div>
+      <div class="card"><p class="kpi-l">Média por partida</p><p class="kpi-v" id="g-media">—</p><p class="kpi-n" id="g-ritmo">—</p></div>
+      <div class="card"><p class="kpi-l">Recorde do squad</p><p class="kpi-v" id="g-rec">—</p><p class="kpi-n" id="g-rec-n">—</p></div>
+      <div class="card ct-span2"><p class="kpi-l">Chance acumulada de token</p><p class="kpi-v" id="g-chance">—</p><p class="kpi-n" id="g-chance-n">—</p></div>
     </div>
-    <p class="small">A chance acumulada mostra a probabilidade de pelo menos um token ter saído com esse número de baús. Cada baú novo continua sendo 1 em 137.500: a sorte não "acumula" para quem está há mais tempo sem achar.</p>
+    <p class="small">A chance acumulada é a probabilidade de pelo menos um token ter saído com esse número de baús. Cada baú novo continua sendo 1 em 137.500: a sorte não "acumula" para quem está há mais tempo sem achar.</p>
+
+    <!-- rank -->
+    <div class="ct-rank-top">
+      <h2 class="ct-h2">Rank final</h2>
+      <label class="ctl">Ordenar por
+        <select id="sel-rank" class="select">
+          <option value="total">Total de baús</option>
+          <option value="media">Média por partida</option>
+          <option value="mvp">Vezes como MVP</option>
+          <option value="rec">Recorde numa partida</option>
+        </select>
+      </label>
+    </div>
+    <ol class="ct-rank" id="lista-rank"></ol>
+    <p class="small">MVP é quem abriu mais baús na partida (empate conta para os dois). A média usa só partidas fechadas em que a pessoa abriu pelo menos um baú.</p>
 
     <h2 class="ct-h2">Opções</h2>
     <div class="ct-opcoes">
       <label class="ctl inline"><input type="checkbox" id="chk-tela"> Manter a tela do celular acesa</label>
       <label class="ctl inline"><input type="checkbox" id="chk-vibrar" checked> Vibrar ao tocar</label>
-      <button type="button" class="btn" id="btn-sessao">Começar nova sessão</button>
       <button type="button" class="btn" id="btn-token">Achamos o token!</button>
       <button type="button" class="btn ghost danger" id="btn-zerar">Zerar a sala</button>
     </div>
-    <p class="small">Use o contador no celular ou numa segunda tela. Ele não lê nem mexe no jogo, então não tem nada a ver com o anti-cheat. Só não usem macro, auto-clicker ou programa que leia a tela do jogo.</p>
+    <p class="small">Se esquecerem de tocar em "Fim da partida", ela fecha sozinha quando alguém marcar um baú 40 minutos depois do último. Use o contador no celular ou numa segunda tela: ele não lê nem mexe no jogo. Só não usem macro, auto-clicker ou programa que leia a tela do jogo.</p>
   </section>
 </main>
 

@@ -76,7 +76,13 @@ Atenção: o print do mapa é arte da Epic. Ele não vai para o site publicado a
 
 ## Contador do squad (`/contador`)
 
-Página para os quatro marcarem cada baú aberto pelo celular e verem o total juntos, ao vivo.
+Página para os quatro marcarem cada baú aberto pelo celular e verem tudo juntos, ao vivo:
+
+- **Partida atual**: o primeiro baú abre a partida; o placar mostra quanto cada um pegou nela.
+  "Fim da partida" fecha e grava no histórico. Partida esquecida aberta fecha sozinha 40 min depois do último baú.
+- **Partida por partida**: gráfico e tabela com os baús de cada jogador em cada partida (★ = MVP).
+- **Geral da caçada**: total, partidas, média por partida, baús por hora, recorde e chance acumulada.
+- **Rank final**: por total, média por partida, vezes como MVP ou recorde numa partida.
 É só um site: não lê nem mexe no jogo.
 
 Arquivos: `contador.html`, `assets/contador.js`, `assets/contador.css` e a função `api/sala.js`.
